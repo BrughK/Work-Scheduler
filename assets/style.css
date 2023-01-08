@@ -35,6 +35,11 @@ textarea {
   color: white;
 }
 
+.description:hover {
+  background-image: linear-gradient(rgb(255, 255, 255),rgba(0, 0, 0, 0.171));
+  transition: ease-in-out;
+}
+
 .present {
   background-color: #ff6961;
   color: white;

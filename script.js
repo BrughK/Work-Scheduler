@@ -1,23 +1,63 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
+// Display the date
+var currentDate = dayjs().format('dddd, MMM D[th]');
+$("#currentDay").html(currentDate);
+
 $(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-  //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  // TODO: Add code to display the current date in the header of the page.
+  init();
+  // Save button event listener
+  $('.saveBtn').on('click', saveStorage);
+
+  function init() {
+    // color time sections respectively
+    colorTime();
+    // load saved
+    loadStorage();
+  }
+
+  // Color the times
+  // .each iterate over jQuery obj and execute function for each match of element
+  function colorTime() {
+    let timeBlock = $('.time-block');
+    $.each(timeBlock, (i) => {
+      let time = $(timeBlock[i]).attr('id').split('-')[1];
+      $(timeBlock[i]).addClass(checkTime(time))
+    })
+  }
+
+  // Check the time
+  function checkTime(time) {
+    let currentTime = dayjs().hour();
+    if (time < currentTime) {
+      return "past"
+    }
+    else if (time > currentTime) {
+      return "future"
+    }
+    else {
+      return "present"
+    }
+  }
+  // load any notes
+  function loadStorage() {
+    let timeBlock = $('.time-block');
+    $.each(timeBlock, (i) => {
+      let id = $(timeBlock[i]).attr('id');
+      let storedVal = localStorage.getItem(id);
+      if (storedVal !== null) {
+        let timeSlot = $(timeBlock[i]);
+        let textArea = $(timeSlot.children()[1]);
+        textArea.val(storedVal);
+      };
+    })
+  }
+  // save to local storage
+  function saveStorage(event) {
+    let button = $(event.target);
+    // 
+    if (button.parent().attr('id') === undefined) button = button.parent();
+    let id = button.parent().attr('id');
+    // Take input text and set the value
+    let text = $(button.siblings()[1]).val();
+    localStorage.setItem(id, text);
+  }
 });
